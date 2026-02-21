@@ -16,9 +16,12 @@ export function CopywritingPreview({ data: initialData }: CopywritingPreviewProp
     const [data, setData] = useState(initialData);
     const [copiedTitle, setCopiedTitle] = useState(false);
     const [copiedBody, setCopiedBody] = useState(false);
+    const [isiOS, setIsiOS] = useState(false);
 
     useEffect(() => {
         setData(initialData);
+        const isiOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        setIsiOS(isiOSDevice);
     }, [initialData]);
 
     const handleCopyTitle = () => {
@@ -94,25 +97,30 @@ export function CopywritingPreview({ data: initialData }: CopywritingPreviewProp
                     <Sparkles className="w-4 h-4" />
                     <p className="text-[10px] font-bold uppercase tracking-wider">已注入引流关键词</p>
                 </div>
-                <button
-                    onClick={() => {
-                        const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-                        if (isiOS) {
+                {isiOS ? (
+                    <button
+                        onClick={() => {
                             // Open XHS App via URL scheme
                             window.location.href = "xhsdiscover://";
-                            // Fallback to web if app not installed (optional, usually apps handle this or it fails gracefully)
+                            // Fallback to web if app not installed
                             setTimeout(() => {
                                 window.open("https://www.xiaohongshu.com", "_blank");
                             }, 1500);
-                        } else {
-                            // Open Mac/PC Creator platform
-                            window.open("https://creator.xiaohongshu.com/new/home?source=official", "_blank");
-                        }
-                    }}
-                    className="btn-primary py-2 px-6 text-sm"
-                >
-                    前往小红书界面
-                </button>
+                        }}
+                        className="btn-primary py-2 px-6 text-sm cursor-pointer"
+                    >
+                        前往小红书发布
+                    </button>
+                ) : (
+                    <a
+                        href="https://creator.xiaohongshu.com/publish/publish"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary py-2 px-6 text-sm no-underline inline-flex items-center justify-center cursor-pointer"
+                    >
+                        前往小红书发布
+                    </a>
+                )}
             </div>
         </div>
     );
